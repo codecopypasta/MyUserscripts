@@ -35,7 +35,7 @@ $(document).ready(function() {
 	});
 
 	function formatTitle(title){
-		title = title.replace(/»\s+/, "<br>");
+		title = title.replace(/»\s+/, "<br>"); 
 		title = title.replace(/\<br\>(.+?)\((.*?)\)($| \| <img)/, "<span class='uploader-name'>$2</span><br>$1$3");
 		title = title.replace("Dual Audio", `<span style="color: #9f9">Dual Audio</span>`);
 		title = title.replace("Softsubs", `<span style="color: #9ff">Softsubs</span>`);
