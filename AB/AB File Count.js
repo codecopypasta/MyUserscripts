@@ -19,20 +19,4 @@ $(document).ready(function() {
 		 target.text(target.text() + ` (${numOfFiles})`);
 	});
 
-	// Backup of Chosensilver's implementation
-	// function insertAfter(referenceNode, newNode) {
-	// 	referenceNode.parentNode.insertBefore(newNode, referenceNode.previousSibling);
-	// }
-
-	// let iterations = 0;
-	// document.querySelectorAll('[id^="filelist_"]').forEach(e => {
-	// 	var displayFolder = document.createElement('tr');
-	// 	displayFolder.innerText = "Total Files: " + (e.rows.length - 1);
-	// 	displayFolder.style.color = "#FF4500";
-	// 	displayFolder.style.fontWeight = "900";
-	// 	displayFolder.classList.add("folderDisplay");
-	// 	insertAfter(document.getElementsByClassName("tabs")[iterations], displayFolder);
-	// 	iterations++;
-	// });
-
 });
