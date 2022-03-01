@@ -33,6 +33,8 @@ $(document).ready(function(){
 
 	$("body").on("change", ".bulk-link-opener-cb", function(){
 		RefreshCount();
+		let isChecked = $(this).is(":checked");
+		$(this).parent().parent().css("background", isChecked ? "#323946" : "");
 	});
 
 	$("body").on("click", ".bulk-start-button", function(){
@@ -61,23 +63,20 @@ $(document).ready(function(){
 
 	$("body").on("click", "#bulk-link-select-all", function(){
 		$(".bulk-link-opener-cb").each(async function(){
-			$(this).prop("checked", true);
+			$(this).prop("checked", true).change();
 		});
-		RefreshCount();
 	});
 
 	$("body").on("click", "#bulk-link-select-none", function(){
 		$(".bulk-link-opener-cb").each(async function(){
-			$(this).prop("checked", false);
+			$(this).prop("checked", false).change();
 		});
-		RefreshCount();
 	});
 
 	$("body").on("click", "#bulk-link-select-invert", function(){
 		$(".bulk-link-opener-cb").each(async function(){
-			$(this).prop("checked", !$(this).prop("checked"));
+			$(this).prop("checked", !$(this).prop("checked")).change();
 		});
-		RefreshCount();
 	});
 
 	$("body").on("click", "#bulk-open-button", function(){
