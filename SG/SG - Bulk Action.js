@@ -54,13 +54,13 @@ $(document).ready(function(){
 
 	let controlPanel = $(`
 	<div style="position: fixed; bottom: 25px; right: 10px; background: #333; border: 2px double #666; padding: 10px; display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px;">
-		<span style="grid-column-end: span 2; color: #ccc; font-size: 1.25em; text-align: center;">Selection</span>
+		<span style="grid-column-end: span 2; color: #ccc; font-size: 1.25em; text-align: center;">Selection (<span class="bulk-link-selected-count">0</span>)</span>
 		<div class="bulk-link-button" id="bulk-link-select-smart">Smart</div>
 		<div class="bulk-link-button" id="bulk-link-select-all">Select All</div>
 		<div class="bulk-link-button" id="bulk-link-select-none">Select None</div>
 		<div class="bulk-link-button" id="bulk-link-select-invert">Invert</div>
-		<div class="bulk-link-button" id="bulk-mark-visited">Mark Visited (<span class="bulk-link-selected-count">0</span>)</div>
-		<div class="bulk-link-button" id="bulk-open-button">Open (<span class="bulk-link-selected-count">0</span>)</div>
+		<div class="bulk-link-button" id="bulk-mark-visited">Mark Visited</div>
+		<div class="bulk-link-button" id="bulk-open-button">Open</div>
 	</div>
 	`);
 	$("body").append(controlPanel);
