@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action
-// @version      1.2
+// @version      2.0
 // @description  Open multiple links easily
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -11,6 +11,8 @@
 
 $(document).ready(function(){
 	'use strict';
+
+	let storageKey = "visitedGAs";
 
 	let id = 0;
 	let start = 0;
@@ -53,13 +55,23 @@ $(document).ready(function(){
 	let controlPanel = $(`
 	<div style="position: fixed; bottom: 25px; right: 10px; background: #333; border: 2px double #666; padding: 10px; display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px;">
 		<span style="grid-column-end: span 2; color: #ccc; font-size: 1.25em; text-align: center;">Selection</span>
+		<div class="bulk-link-button" id="bulk-link-select-smart">Smart</div>
 		<div class="bulk-link-button" id="bulk-link-select-all">Select All</div>
 		<div class="bulk-link-button" id="bulk-link-select-none">Select None</div>
 		<div class="bulk-link-button" id="bulk-link-select-invert">Invert</div>
-		<div class="bulk-link-button" id="bulk-open-button">Open (<span id="bulk-link-selected-count">0</span>)</div>
+		<div class="bulk-link-button" id="bulk-mark-visited">Mark Visited (<span class="bulk-link-selected-count">0</span>)</div>
+		<div class="bulk-link-button" id="bulk-open-button">Open (<span class="bulk-link-selected-count">0</span>)</div>
 	</div>
 	`);
 	$("body").append(controlPanel);
+
+	$("body").on("click", "#bulk-link-select-smart", function(){
+		let links = GetVisitedLinks();
+		$(".bulk-link-opener-cb").each(async function(){
+			if(links.indexOf($(this).data("link")) == -1)
+			   $(this).prop("checked", true).change();
+		});
+	});
 
 	$("body").on("click", "#bulk-link-select-all", function(){
 		$(".bulk-link-opener-cb").each(async function(){
@@ -79,24 +91,92 @@ $(document).ready(function(){
 		});
 	});
 
-	$("body").on("click", "#bulk-open-button", function(){
+	$("body").on("click", "#bulk-mark-visited", function(){
 		let n = 0;
+		let visitedLinks = [];
 		$(".bulk-link-opener-cb:checked").each(function(){
 			let link = $(this).data("link");
-			console.log(link);
+			visitedLinks.push(link);
 			setTimeout(function(){
-				window.open(link, '_blank')
-			}, 500 * n++);
+				let win = window.open(link, '_blank');
+				let interval = setInterval(function(){
+					if(!win.location.href.includes(link))
+						return;
+					win.close();
+					clearInterval(interval);
+				}, 100);
+			}, 50 * n++);
 		});
+		SaveVisitedLinks(visitedLinks);
 	});
+
+	$("body").on("click", "#bulk-open-button", function(){
+		let n = 0;
+		let visitedLinks = [];
+		$(".bulk-link-opener-cb:checked").each(function(){
+			let link = $(this).data("link");
+			visitedLinks.push(link);
+			setTimeout(function(){
+				window.open(link, '_blank');
+			}, 50 * n++);
+		});
+		SaveVisitedLinks(visitedLinks);
+	});
+
+
+	function SaveVisitedLinks(links){
+		let data = {};
+		let oldData = localStorage.getItem(storageKey);
+		if(oldData !== null){
+			data = JSON.parse(oldData);
+		}
+		let now = Date.now();
+		for(let l of links){
+			if(!data[l])
+				data[l] = now;
+		}
+		localStorage.setItem(storageKey, JSON.stringify(data));
+	}
+
+	function GetVisitedLinks(){
+		let links = [];
+		let data = localStorage.getItem(storageKey);
+		if(data === null)
+			return links;
+		data = JSON.parse(data);
+		for(let key in data){
+			links.push(key);
+		}
+		return links;
+	}
+
+
+	// Remove old data
+	(function(){
+		let data = localStorage.getItem(storageKey);
+		if(data === null){
+			return;
+		}
+		data = JSON.parse(data);
+		let newData = {};
+		for(let key in data){
+			let diffWeeks = (Date.now() - data[key]) / 1000 / 60 / 60 / 24 / 7; // convert to secs, divide by secs in a week
+			if(diffWeeks < 4){
+				newData[key] = data[key];
+			}
+		}
+		// Update the data
+		localStorage.setItem(storageKey, JSON.stringify(newData));
+	})()
 
 
 
 	function RefreshCount(){
-		$("#bulk-link-selected-count").text($(".bulk-link-opener-cb:checked").length);
+		$(".bulk-link-selected-count").text($(".bulk-link-opener-cb:checked").length);
 	}
 
 
+	
 	$("body").append(`
 	<style type="text/css">
 		.giveaway__row-outer-wrap{
