@@ -59,7 +59,7 @@ $(document).ready(function(){
 		<div class="bulk-link-button" id="bulk-link-select-all">Select All</div>
 		<div class="bulk-link-button" id="bulk-link-select-none">Select None</div>
 		<div class="bulk-link-button" id="bulk-link-select-invert">Invert</div>
-		<div class="bulk-link-button" id="bulk-mark-visited">Mark Visited</div>
+		<div class="bulk-link-button" id="bulk-mark-visited">Mark Done</div>
 		<div class="bulk-link-button" id="bulk-open-button">Open</div>
 	</div>
 	`);
