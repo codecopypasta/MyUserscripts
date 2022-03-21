@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action
-// @version      2.2.1
+// @version      2.2.2
 // @description  Open multiple links easily
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -20,6 +20,9 @@ $(document).ready(function(){
 	if(currentUrl.includes("steamgifts.com/giveaway/")){
 		let urlToAdd = GetGACode(currentUrl);
 		let data = localStorage.getItem(storageKey);
+		let parameters = new URLSearchParams(new URL(currentUrl).search);
+		if(parameters.has("bulked"))
+			return;
 
 		if(data === null)
 			data = {}
@@ -120,10 +123,10 @@ $(document).ready(function(){
 
 			$("body").on("click", "#bulk-mark-visited", function(){
 				let n = 0;
-				// let visitedLinks = [];
+				let visitedLinks = [];
 				$(".bulk-link-opener-cb:checked").each(function(){
-					let link = $(this).data("link");
-					// visitedLinks.push(GetGACode(link));
+					let link = $(this).data("link") + "?bulked";
+					visitedLinks.push(GetGACode(link));
 					setTimeout(function(){
 						let win = window.open(link, '_blank');
 						let interval = setInterval(function(){
@@ -134,20 +137,20 @@ $(document).ready(function(){
 						}, 100);
 					}, 50 * n++);
 				});
-				// SaveVisitedLinks(visitedLinks);
+				SaveVisitedLinks(visitedLinks);
 			});
 
 			$("body").on("click", "#bulk-open-button", function(){
 				let n = 0;
-				// let visitedLinks = [];
+				let visitedLinks = [];
 				$(".bulk-link-opener-cb:checked").each(function(){
-					let link = $(this).data("link");
-					// visitedLinks.push(GetGACode(link));
+					let link = $(this).data("link") + "?bulked";
+					visitedLinks.push(GetGACode(link));
 					setTimeout(function(){
 						window.open(link, '_blank');
 					}, 50 * n++);
 				});
-				// SaveVisitedLinks(visitedLinks);
+				SaveVisitedLinks(visitedLinks);
 			});
 		})();
 
@@ -174,19 +177,19 @@ $(document).ready(function(){
 			$(".bulk-link-selected-count").text($(".bulk-link-opener-cb:checked").length);
 		}
 
-		// function SaveVisitedLinks(links){
-		// 	let data = {};
-		// 	let oldData = localStorage.getItem(storageKey);
-		// 	if(oldData !== null){
-		// 		data = JSON.parse(oldData);
-		// 	}
-		// 	let now = Date.now();
-		// 	for(let l of links){
-		// 		if(!data[l])
-		// 			data[l] = now;
-		// 	}
-		// 	localStorage.setItem(storageKey, JSON.stringify(data));
-		// }
+		function SaveVisitedLinks(links){
+			let data = {};
+			let oldData = localStorage.getItem(storageKey);
+			if(oldData !== null){
+				data = JSON.parse(oldData);
+			}
+			let now = Date.now();
+			for(let l of links){
+				if(!data[l])
+					data[l] = now;
+			}
+			localStorage.setItem(storageKey, JSON.stringify(data));
+		}
 
 		function GetVisitedLinks(){
 			let links = [];
