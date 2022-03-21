@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action
-// @version      2.0
+// @version      2.0.1
 // @description  Open multiple links easily
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
