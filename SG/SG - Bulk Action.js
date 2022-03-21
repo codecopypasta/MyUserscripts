@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action
-// @version      2.2
+// @version      2.2.1
 // @description  Open multiple links easily
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -16,7 +16,7 @@ $(document).ready(function(){
 	let storageKey = "visitedGAs";
 	let currentUrl = window.location.href;
 	let reg = /.*giveaway\/(.{5})\//;
-	
+
 	if(currentUrl.includes("steamgifts.com/giveaway/")){
 		let urlToAdd = GetGACode(currentUrl);
 		let data = localStorage.getItem(storageKey);
@@ -26,7 +26,7 @@ $(document).ready(function(){
 		else
 			data = JSON.parse(data);
 
-		
+
 		if(!data[urlToAdd]){
 			data[urlToAdd] = Date.now();
 			localStorage.setItem(storageKey, JSON.stringify(data));
@@ -36,34 +36,34 @@ $(document).ready(function(){
 		let id = 0;
 		let start = 0;
 		let end = 0;
-		
+
 		// Add controls for each GA row
 		(function(){
 			$(".page__heading + div > .giveaway__row-outer-wrap").each(function(){
 				let parent = $(this)
-		
+
 				let link = parent.find("a").attr("href");
-		
+
 				let dom = $(`<div class="bulk-link-opener" id="bulk-link-opener-${id}"></div>`);
 				parent.append(dom);
-		
+
 				dom.append(`<div class="bulk-link-button bulk-start-button" data-index="${id}">Start</div>`);
 				dom.append(`<input type="checkbox" data-link="${link}" id="bulk-link-opener-cb-${id}" class="bulk-link-opener-cb">`);
 				dom.append(`<div class="bulk-link-button bulk-end-button" data-index="${id}">End</div>`);
-		
+
 				id++;
 			});
-	
+
 			$("body").on("change", ".bulk-link-opener-cb", function(){
 				RefreshCount();
 				let isChecked = $(this).is(":checked");
 				$(this).parent().parent().css("background", isChecked ? "#323946" : "");
 			});
-		
+
 			$("body").on("click", ".bulk-start-button", function(){
 				start = $(this).data("index");
 			});
-		
+
 			$("body").on("click", ".bulk-end-button", function(){
 				end = $(this).data("index");
 				for(let i = start; i <= end; i++){
@@ -120,10 +120,10 @@ $(document).ready(function(){
 
 			$("body").on("click", "#bulk-mark-visited", function(){
 				let n = 0;
-				let visitedLinks = [];
+				// let visitedLinks = [];
 				$(".bulk-link-opener-cb:checked").each(function(){
 					let link = $(this).data("link");
-					visitedLinks.push(GetGACode(link));
+					// visitedLinks.push(GetGACode(link));
 					setTimeout(function(){
 						let win = window.open(link, '_blank');
 						let interval = setInterval(function(){
@@ -134,23 +134,23 @@ $(document).ready(function(){
 						}, 100);
 					}, 50 * n++);
 				});
-				SaveVisitedLinks(visitedLinks);
+				// SaveVisitedLinks(visitedLinks);
 			});
 
 			$("body").on("click", "#bulk-open-button", function(){
 				let n = 0;
-				let visitedLinks = [];
+				// let visitedLinks = [];
 				$(".bulk-link-opener-cb:checked").each(function(){
 					let link = $(this).data("link");
-					visitedLinks.push(GetGACode(link));
+					// visitedLinks.push(GetGACode(link));
 					setTimeout(function(){
 						window.open(link, '_blank');
 					}, 50 * n++);
 				});
-				SaveVisitedLinks(visitedLinks);
+				// SaveVisitedLinks(visitedLinks);
 			});
 		})();
-	
+
 		// Remove old data
 		(function(){
 			let data = localStorage.getItem(storageKey);
@@ -169,25 +169,25 @@ $(document).ready(function(){
 			localStorage.setItem(storageKey, JSON.stringify(newData));
 		})()
 
-		
+
 		function RefreshCount(){
 			$(".bulk-link-selected-count").text($(".bulk-link-opener-cb:checked").length);
 		}
 
-		function SaveVisitedLinks(links){
-			let data = {};
-			let oldData = localStorage.getItem(storageKey);
-			if(oldData !== null){
-				data = JSON.parse(oldData);
-			}
-			let now = Date.now();
-			for(let l of links){
-				if(!data[l])
-					data[l] = now;
-			}
-			localStorage.setItem(storageKey, JSON.stringify(data));
-		}
-	
+		// function SaveVisitedLinks(links){
+		// 	let data = {};
+		// 	let oldData = localStorage.getItem(storageKey);
+		// 	if(oldData !== null){
+		// 		data = JSON.parse(oldData);
+		// 	}
+		// 	let now = Date.now();
+		// 	for(let l of links){
+		// 		if(!data[l])
+		// 			data[l] = now;
+		// 	}
+		// 	localStorage.setItem(storageKey, JSON.stringify(data));
+		// }
+
 		function GetVisitedLinks(){
 			let links = [];
 			let data = localStorage.getItem(storageKey);
@@ -199,8 +199,8 @@ $(document).ready(function(){
 			}
 			return links;
 		}
-	
-	
+
+
 		// Add CSS
 		(function(){
 			$("body").append(`
@@ -237,7 +237,7 @@ $(document).ready(function(){
 			</style>
 			`);
 		})()
-		
+
 	}
 
 
