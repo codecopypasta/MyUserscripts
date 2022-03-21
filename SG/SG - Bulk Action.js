@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action
-// @version      2.2.2
+// @version      2.2.5
 // @description  Open multiple links easily
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -21,18 +21,25 @@ $(document).ready(function(){
 		let urlToAdd = GetGACode(currentUrl);
 		let data = localStorage.getItem(storageKey);
 		let parameters = new URLSearchParams(new URL(currentUrl).search);
-		if(parameters.has("bulked"))
-			return;
+		let paramsToRemove = [];
 
-		if(data === null)
-			data = {}
-		else
-			data = JSON.parse(data);
+		window.history.pushState("", "", currentUrl.replace(/\?.*/, ""));
+
+		if(!parameters.has("bulked")){
+			if(data === null)
+				data = {}
+			else
+				data = JSON.parse(data);
 
 
-		if(!data[urlToAdd]){
-			data[urlToAdd] = Date.now();
-			localStorage.setItem(storageKey, JSON.stringify(data));
+			if(!data[urlToAdd]){
+				data[urlToAdd] = Date.now();
+				localStorage.setItem(storageKey, JSON.stringify(data));
+			}
+		}
+
+		if(parameters.has("close")){
+			window.close();
 		}
 	}
 	else{
@@ -125,16 +132,17 @@ $(document).ready(function(){
 				let n = 0;
 				let visitedLinks = [];
 				$(".bulk-link-opener-cb:checked").each(function(){
-					let link = $(this).data("link") + "?bulked";
+					let link = $(this).data("link") + "?bulked&close";
 					visitedLinks.push(GetGACode(link));
 					setTimeout(function(){
-						let win = window.open(link, '_blank');
-						let interval = setInterval(function(){
-							if(!win.location.href.includes(link))
-								return;
-							win.close();
-							clearInterval(interval);
-						}, 100);
+						window.open(link, '_blank');
+						// let win = window.open(link, '_blank');
+						// let interval = setInterval(function(){
+						// 	if(!win.location.href.includes(link))
+						// 		return;
+						// 	win.close();
+						// 	clearInterval(interval);
+						// }, 100);
 					}, 50 * n++);
 				});
 				SaveVisitedLinks(visitedLinks);
