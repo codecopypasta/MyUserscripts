@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action
-// @version      2.2.5
+// @version      2.2.7
 // @description  Open multiple links easily
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -170,8 +170,10 @@ $(document).ready(function(){
 			}
 			data = JSON.parse(data);
 			let newData = {};
+			let weekInMS = 1000 * 60 * 60 * 24 * 7; // ms in a week
+			let now = Date.now();
 			for(let key in data){
-				let diffWeeks = (Date.now() - data[key]) / 1000 / 60 / 60 / 24 / 7; // convert to secs, divide by secs in a week
+				let diffWeeks = (now - data[key]) / weekInMS;
 				if(diffWeeks < 4){
 					newData[key] = data[key];
 				}
