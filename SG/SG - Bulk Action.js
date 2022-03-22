@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action
-// @version      2.2.7
+// @version      2.2.8
 // @description  Open multiple links easily
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -20,17 +20,18 @@ $(document).ready(function(){
 	if(currentUrl.includes("steamgifts.com/giveaway/")){
 		let urlToAdd = GetGACode(currentUrl);
 		let data = localStorage.getItem(storageKey);
-		let parameters = new URLSearchParams(new URL(currentUrl).search);
-		let paramsToRemove = [];
+		let url = new URL(currentUrl);
+		let parameters = new URLSearchParams(url.search);
 
-		window.history.pushState("", "", currentUrl.replace(/\?.*/, ""));
+		url.searchParams.delete("bulked");
+		url.searchParams.delete("close");
+		window.history.pushState("", "", url.href);
 
 		if(!parameters.has("bulked")){
 			if(data === null)
 				data = {}
 			else
 				data = JSON.parse(data);
-
 
 			if(!data[urlToAdd]){
 				data[urlToAdd] = Date.now();
