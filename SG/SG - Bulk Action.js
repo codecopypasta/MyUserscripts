@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         SG - Bulk Action
-// @version      2.3.2
+// @version      2.5
 // @description  Open multiple links easily
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
 // @match        https://www.steamgifts.com/giveaways/*
 // @match        https://www.steamgifts.com/giveaway/*
 // @icon         https://www.google.com/s2/favicons?domain=steamgifts.com
-// @grant        none
+// @grant        GM_setClipboard
 // ==/UserScript==
 
 $(document).ready(function(){
@@ -51,9 +51,9 @@ $(document).ready(function(){
 				let dom = $(`<div class="bulk-link-opener" id="bulk-link-opener-${id}"></div>`);
 				parent.append(dom);
 
-				dom.append(`<div class="bulk-link-button bulk-start-button" data-index="${id}">Start</div>`);
+				dom.append(`<div class="control-panel-button bulk-start-button" data-index="${id}">Start</div>`);
 				dom.append(`<input type="checkbox" data-link="${link}" id="bulk-link-opener-cb-${id}" class="bulk-link-opener-cb">`);
-				dom.append(`<div class="bulk-link-button bulk-end-button" data-index="${id}">End</div>`);
+				dom.append(`<div class="control-panel-button bulk-end-button" data-index="${id}">End</div>`);
 
 				id++;
 			});
@@ -82,12 +82,12 @@ $(document).ready(function(){
 			let controlPanel = $(`
 			<div style="position: fixed; bottom: 25px; right: 10px; background: #333; border: 2px double #666; padding: 10px; display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px;">
 				<span style="grid-column-end: span 2; color: #ccc; font-size: 1.25em; text-align: center;">Selection (<span class="bulk-link-selected-count">0</span>)</span>
-				<div class="bulk-link-button" id="bulk-link-select-smart">Smart</div>
-				<div class="bulk-link-button" id="bulk-link-select-all">Select All</div>
-				<div class="bulk-link-button" id="bulk-link-select-none">Select None</div>
-				<div class="bulk-link-button" id="bulk-link-select-invert">Invert</div>
-				<div class="bulk-link-button" id="bulk-mark-visited">Mark Done</div>
-				<div class="bulk-link-button" id="bulk-open-button">Open</div>
+				<div class="control-panel-button" id="bulk-link-select-smart">Smart</div>
+				<div class="control-panel-button" id="bulk-link-select-all">Select All</div>
+				<div class="control-panel-button" id="bulk-link-select-none">Select None</div>
+				<div class="control-panel-button" id="bulk-link-select-invert">Invert</div>
+				<div class="control-panel-button" id="bulk-mark-visited">Mark Done</div>
+				<div class="control-panel-button" id="bulk-open-button">Open</div>
 			</div>
 			`);
 			$("body").append(controlPanel);
@@ -192,6 +192,47 @@ $(document).ready(function(){
 		}
 
 
+		// Export/Import Panel
+		(function(){
+			let controlPanel = $(`
+			<div style="position: fixed; bottom: 25px; left: 25px; background: #333; border: 2px double #666; padding: 10px; display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px;">
+				<span style="grid-column-end: span 2; color: #ccc; font-size: 1.25em; text-align: center;">Manage Data</span>
+				<div class="control-panel-button" id="export-visited-data">Export</div>
+				<div class="control-panel-button" id="import-visited-data">Import</div>
+			</div>
+			`);
+			$("body").append(controlPanel);
+
+			$("body").on("click", "#export-visited-data", function(){
+				let keys = GetVisitedLinks();
+				let data = {};
+				for (let k of keys) {
+					data[k] = localStorage.getItem(k);
+				}
+				data = JSON.stringify(data);
+				console.log(data);
+				navigator.clipboard.writeText(data);
+				alert("Exported to Clipboard & Console");
+			});
+
+			$("body").on("click", "#import-visited-data", function(){
+				let data = prompt("Import");
+				try {
+					data = JSON.parse(data);
+					for (let k in data) {
+						if(localStorage.getItem(k) === null){
+							localStorage.setItem(k, data[k]);
+						}
+					}
+					alert("Data imported");
+				} catch (error) {
+					alert("No data found!");
+					return;
+				}
+			});
+		})();
+
+
 		// Add CSS
 		(function(){
 			$("body").append(`
@@ -209,7 +250,7 @@ $(document).ready(function(){
 					align-items: stretch;
 					margin-left: 20px;
 				}
-				.bulk-link-button{
+				.control-panel-button{
 					color: #fff;
 					font-weight: bold;
 					text-align: center;
@@ -219,10 +260,10 @@ $(document).ready(function(){
 					cursor: pointer;
 					border: 1px solid #000;
 				}
-				.bulk-link-button.bulk-start-button{
+				.control-panel-button.bulk-start-button{
 					background: #696;
 				}
-				.bulk-link-button.bulk-end-button{
+				.control-panel-button.bulk-end-button{
 					background: #966;
 				}
 			</style>
