@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action
-// @version      2.2.8
+// @version      2.3.2
 // @description  Open multiple links easily
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -13,30 +13,23 @@
 $(document).ready(function(){
 	'use strict';
 
-	let storageKey = "visitedGAs";
+	let gaKeyPrefix = "GA#";
 	let currentUrl = window.location.href;
 	let reg = /.*giveaway\/(.{5})\//;
 
 	if(currentUrl.includes("steamgifts.com/giveaway/")){
 		let urlToAdd = GetGACode(currentUrl);
-		let data = localStorage.getItem(storageKey);
 		let url = new URL(currentUrl);
 		let parameters = new URLSearchParams(url.search);
 
-		url.searchParams.delete("bulked");
-		url.searchParams.delete("close");
-		window.history.pushState("", "", url.href);
+		if(parameters.has("bulked")){
+			url.searchParams.delete("bulked");
+			url.searchParams.delete("close");
+			window.history.pushState("", "", url.href);
+		}
 
-		if(!parameters.has("bulked")){
-			if(data === null)
-				data = {}
-			else
-				data = JSON.parse(data);
-
-			if(!data[urlToAdd]){
-				data[urlToAdd] = Date.now();
-				localStorage.setItem(storageKey, JSON.stringify(data));
-			}
+		if(!parameters.has("bulked") && localStorage.getItem(urlToAdd) === null){
+			localStorage.setItem(urlToAdd, Date.now());
 		}
 
 		if(parameters.has("close")){
@@ -101,30 +94,24 @@ $(document).ready(function(){
 
 			$("body").on("click", "#bulk-link-select-smart", function(){
 				let links = GetVisitedLinks();
-				$(".bulk-link-opener-cb").each(async function(){
+				$(".bulk-link-opener-cb").each(function(){
 					let curLink = GetGACode($(this).data("link"));
-					for(let l of links){
-						if(l === curLink)
-							return;
+					if(!links.includes(curLink)){
+						$(this).prop("checked", true).change();
 					}
-					$(this).prop("checked", true).change();
 				});
 			});
 
 			$("body").on("click", "#bulk-link-select-all", function(){
-				$(".bulk-link-opener-cb").each(async function(){
-					$(this).prop("checked", true).change();
-				});
+				$(".bulk-link-opener-cb").prop("checked", true).change();
 			});
 
 			$("body").on("click", "#bulk-link-select-none", function(){
-				$(".bulk-link-opener-cb").each(async function(){
-					$(this).prop("checked", false).change();
-				});
+				$(".bulk-link-opener-cb").prop("checked", false).change();
 			});
 
 			$("body").on("click", "#bulk-link-select-invert", function(){
-				$(".bulk-link-opener-cb").each(async function(){
+				$(".bulk-link-opener-cb").each(function(){
 					$(this).prop("checked", !$(this).prop("checked")).change();
 				});
 			});
@@ -133,18 +120,7 @@ $(document).ready(function(){
 				let n = 0;
 				let visitedLinks = [];
 				$(".bulk-link-opener-cb:checked").each(function(){
-					let link = $(this).data("link") + "?bulked&close";
-					visitedLinks.push(GetGACode(link));
-					setTimeout(function(){
-						window.open(link, '_blank');
-						// let win = window.open(link, '_blank');
-						// let interval = setInterval(function(){
-						// 	if(!win.location.href.includes(link))
-						// 		return;
-						// 	win.close();
-						// 	clearInterval(interval);
-						// }, 100);
-					}, 50 * n++);
+					visitedLinks.push(VisitWithDelay(this, "?bulked&close", n++));
 				});
 				SaveVisitedLinks(visitedLinks);
 			});
@@ -153,11 +129,7 @@ $(document).ready(function(){
 				let n = 0;
 				let visitedLinks = [];
 				$(".bulk-link-opener-cb:checked").each(function(){
-					let link = $(this).data("link") + "?bulked";
-					visitedLinks.push(GetGACode(link));
-					setTimeout(function(){
-						window.open(link, '_blank');
-					}, 50 * n++);
+					visitedLinks.push(VisitWithDelay(this, "?bulked", n++));
 				});
 				SaveVisitedLinks(visitedLinks);
 			});
@@ -165,51 +137,56 @@ $(document).ready(function(){
 
 		// Remove old data
 		(function(){
-			let data = localStorage.getItem(storageKey);
-			if(data === null){
-				return;
-			}
-			data = JSON.parse(data);
-			let newData = {};
 			let weekInMS = 1000 * 60 * 60 * 24 * 7; // ms in a week
 			let now = Date.now();
-			for(let key in data){
-				let diffWeeks = (now - data[key]) / weekInMS;
-				if(diffWeeks < 4){
-					newData[key] = data[key];
+			let keysToRemove = [];
+
+			for(let i = 0; i < localStorage.length; i++){
+				let key = localStorage.key(i);
+				if(key.startsWith(gaKeyPrefix)){
+					let diffInWeeks = (now - Number(localStorage.getItem(key))) / weekInMS;
+					if(diffInWeeks > 4){
+						keysToRemove.push(key);
+					}
 				}
 			}
-			// Update the data
-			localStorage.setItem(storageKey, JSON.stringify(newData));
-		})()
+
+			for(key in keysToRemove){
+				localStorage.removeItem(key);
+			}
+		})();
 
 
 		function RefreshCount(){
 			$(".bulk-link-selected-count").text($(".bulk-link-opener-cb:checked").length);
 		}
 
+		function VisitWithDelay(ele, parameter, delay){
+			let link = $(ele).data("link");
+			let code = GetGACode(link);
+			link += parameter;
+			setTimeout(function(){
+				window.open(link, '_blank');
+			}, 50 * delay);
+			return code;
+		}
+
 		function SaveVisitedLinks(links){
-			let data = {};
-			let oldData = localStorage.getItem(storageKey);
-			if(oldData !== null){
-				data = JSON.parse(oldData);
-			}
 			let now = Date.now();
 			for(let l of links){
-				if(!data[l])
-					data[l] = now;
+				if(localStorage.getItem(l) === null)
+					localStorage.setItem(l, now);
 			}
-			localStorage.setItem(storageKey, JSON.stringify(data));
 		}
 
 		function GetVisitedLinks(){
 			let links = [];
-			let data = localStorage.getItem(storageKey);
-			if(data === null)
-				return links;
-			data = JSON.parse(data);
-			for(let key in data){
-				links.push(key);
+
+			for(let i = 0; i < localStorage.length; i++){
+				let key = localStorage.key(i);
+				if(key.startsWith(gaKeyPrefix)){
+					links.push(key);
+				}
 			}
 			return links;
 		}
@@ -256,7 +233,7 @@ $(document).ready(function(){
 
 
 	function GetGACode(url){
-		return reg.exec(url)[1];
+		return gaKeyPrefix + reg.exec(url)[1];
 	}
 
 });
