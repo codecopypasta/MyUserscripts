@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         SG - Bulk Action
-// @version      2.5.1
+// @version      2.5.2
 // @description  Open multiple links easily
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
 // @match        https://www.steamgifts.com/giveaways/*
 // @match        https://www.steamgifts.com/giveaway/*
-// @exclude      https://www.steamgifts.com/giveaways/won
+// @exclude      https://www.steamgifts.com/giveaways/won/*
 // @icon         https://www.google.com/s2/favicons?domain=steamgifts.com
 // @grant        GM_setClipboard
 // ==/UserScript==
