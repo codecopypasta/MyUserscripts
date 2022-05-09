@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action
-// @version      2.5.3
+// @version      2.5.5
 // @description  Open multiple links easily
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -10,6 +10,10 @@
 // @exclude      https://www.steamgifts.com/giveaways/won/*
 // @exclude      https://www.steamgifts.com/giveaways/entered
 // @exclude      https://www.steamgifts.com/giveaways/entered/*
+// @exclude      https://www.steamgifts.com/giveaways/created
+// @exclude      https://www.steamgifts.com/giveaways/created/*
+// @exclude      https://www.steamgifts.com/giveaways/new
+// @exclude      https://www.steamgifts.com/giveaways/wishlist
 // @icon         https://www.google.com/s2/favicons?domain=steamgifts.com
 // @grant        GM_setClipboard
 // ==/UserScript==
