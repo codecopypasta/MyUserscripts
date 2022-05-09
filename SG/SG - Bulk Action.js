@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action
-// @version      2.5.2
+// @version      2.5.3
 // @description  Open multiple links easily
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -8,6 +8,8 @@
 // @match        https://www.steamgifts.com/giveaway/*
 // @exclude      https://www.steamgifts.com/giveaways/won
 // @exclude      https://www.steamgifts.com/giveaways/won/*
+// @exclude      https://www.steamgifts.com/giveaways/entered
+// @exclude      https://www.steamgifts.com/giveaways/entered/*
 // @icon         https://www.google.com/s2/favicons?domain=steamgifts.com
 // @grant        GM_setClipboard
 // ==/UserScript==
