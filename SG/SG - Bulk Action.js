@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         SG - Bulk Action
-// @version      2.5.5
-// @description  Open multiple links easily
+// @name         SG - Bulk Action & Better GA listings
+// @version      2.8
+// @description  Make SG easier to use
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
 // @match        https://www.steamgifts.com/giveaways/*
@@ -12,8 +12,9 @@
 // @exclude      https://www.steamgifts.com/giveaways/entered/*
 // @exclude      https://www.steamgifts.com/giveaways/created
 // @exclude      https://www.steamgifts.com/giveaways/created/*
-// @exclude      https://www.steamgifts.com/giveaways/new
 // @exclude      https://www.steamgifts.com/giveaways/wishlist
+// @exclude      https://www.steamgifts.com/giveaways/wishlist/*
+// @exclude      https://www.steamgifts.com/giveaways/new
 // @icon         https://www.google.com/s2/favicons?domain=steamgifts.com
 // @grant        GM_setClipboard
 // ==/UserScript==
@@ -37,7 +38,8 @@ $(document).ready(function(){
 		}
 
 		if(!parameters.has("bulked") && localStorage.getItem(urlToAdd) === null){
-			localStorage.setItem(urlToAdd, Date.now());
+			let timestamp = $(".featured__column > span[data-timestamp]").first().data("timestamp") * 1000;
+			localStorage.setItem(urlToAdd, timestamp);
 		}
 
 		if(parameters.has("close")){
@@ -55,12 +57,13 @@ $(document).ready(function(){
 				let parent = $(this)
 
 				let link = parent.find("a").attr("href");
+				let time = parent.find(".giveaway__columns > div:first-child > span[data-timestamp]").attr("data-timestamp") * 1000;
 
 				let dom = $(`<div class="bulk-link-opener" id="bulk-link-opener-${id}"></div>`);
 				parent.append(dom);
 
 				dom.append(`<div class="control-panel-button bulk-start-button" data-index="${id}">Start</div>`);
-				dom.append(`<input type="checkbox" data-link="${link}" id="bulk-link-opener-cb-${id}" class="bulk-link-opener-cb">`);
+				dom.append(`<input type="checkbox" data-link="${link}" data-time="${time}" id="bulk-link-opener-cb-${id}" class="bulk-link-opener-cb">`);
 				dom.append(`<div class="control-panel-button bulk-end-button" data-index="${id}">End</div>`);
 
 				id++;
@@ -126,18 +129,20 @@ $(document).ready(function(){
 
 			$("body").on("click", "#bulk-mark-visited", function(){
 				let n = 0;
-				let visitedLinks = [];
+				let visitedLinks = {};
 				$(".bulk-link-opener-cb:checked").each(function(){
-					visitedLinks.push(VisitWithDelay(this, "?bulked&close", n++));
+					let {code, time} = VisitWithDelay(this, "?bulked&close", n++);
+					visitedLinks[code] = time;
 				});
 				SaveVisitedLinks(visitedLinks);
 			});
 
 			$("body").on("click", "#bulk-open-button", function(){
 				let n = 0;
-				let visitedLinks = [];
+				let visitedLinks = {};
 				$(".bulk-link-opener-cb:checked").each(function(){
-					visitedLinks.push(VisitWithDelay(this, "?bulked", n++));
+					let {code, time} = VisitWithDelay(this, "?bulked", n++);
+					visitedLinks[code] = time;
 				});
 				SaveVisitedLinks(visitedLinks);
 			});
@@ -152,16 +157,17 @@ $(document).ready(function(){
 			for(let i = 0; i < localStorage.length; i++){
 				let key = localStorage.key(i);
 				if(key.startsWith(gaKeyPrefix)){
-					let diffInWeeks = (now - Number(localStorage.getItem(key))) / weekInMS;
-					if(diffInWeeks > 4){
+					if(now > Number(localStorage.getItem(key))){
 						keysToRemove.push(key);
 					}
 				}
 			}
 
-			for(key in keysToRemove){
+			for(let key of keysToRemove){
+				console.log("Removing key: " + key);
 				localStorage.removeItem(key);
 			}
+			console.log("Total keys removed: " + keysToRemove.length);
 		})();
 
 
@@ -170,20 +176,21 @@ $(document).ready(function(){
 		}
 
 		function VisitWithDelay(ele, parameter, delay){
-			let link = $(ele).data("link");
+			let $ele = $(ele);
+			let link = $ele.data("link");
 			let code = GetGACode(link);
+			let time = $ele.data("time");
 			link += parameter;
 			setTimeout(function(){
 				window.open(link, '_blank');
 			}, 50 * delay);
-			return code;
+			return {code, time};
 		}
 
 		function SaveVisitedLinks(links){
-			let now = Date.now();
-			for(let l of links){
+			for(let l in links){
 				if(localStorage.getItem(l) === null)
-					localStorage.setItem(l, now);
+					localStorage.setItem(l, links[l]);
 			}
 		}
 
@@ -200,8 +207,46 @@ $(document).ready(function(){
 		}
 
 
+		// Better timestamps & Color codes in GA lists
+		(function(){
+			let hslMin = 0;   // red
+			let hslMax = 115; // green
+			let timeMin = 300;	  // 5 mins
+			let timeMax = 259200; // 3 days
+				
+				
+			function prettyTimeDiff(t1, t2){
+				let diff = (t2 - t1) / 1000;
+				let w = parseInt(diff/60/60/24/7);
+				let d = parseInt(diff/60/60/24) - w*7;
+				let h = parseInt(diff/60/60) - (w*7 + d)*24;
+				let m = parseInt(diff/60) - (w*7*24 + d*24 + h)*60;
+				return {str:`${w}w ${d}d ${h}h ${m}m`, "w":w, "d":d, "h":h, "m":m, "diff":diff};
+			}
+			
+			setTimeout(function() {
+				$(".giveaway__columns > div:first-child > span[data-timestamp]").each(function(){
+					let time = new Date(parseInt($(this).attr("data-timestamp"))*1000);
+					let inFuture = time.getTime() > Date.now();
+					let diff = inFuture ? prettyTimeDiff(Date.now(), time.getTime()) : prettyTimeDiff(time.getTime(), Date.now());
+					$(this).html(`${$(this).text()} (${diff["str"]})`);
+					
+					if(inFuture){
+						// Dynamic Coloring
+						let h = Math.min(diff["diff"], timeMax + timeMin) - timeMin;
+						h = h / timeMax;
+						h = (hslMax - hslMin) * h + hslMin;
+						$(this).parent().css("background", `hsl(${h}, 75%, 20%)`);
+					}
+				});
+			}, 500);
+		})();
+
+
 		// Export/Import Panel
 		(function(){
+			let maxGAPerLine = 1850;
+
 			let controlPanel = $(`
 			<div style="position: fixed; bottom: 25px; left: 25px; background: #333; border: 2px double #666; padding: 10px; display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px;">
 				<span style="grid-column-end: span 2; color: #ccc; font-size: 1.25em; text-align: center;">Manage Data</span>
@@ -213,20 +258,33 @@ $(document).ready(function(){
 
 			$("body").on("click", "#export-visited-data", function(){
 				let keys = GetVisitedLinks();
+				let clipboard = "";
+				let i = 0;
 				let data = {};
 				for (let k of keys) {
 					data[k] = localStorage.getItem(k);
+					i++;
+					if(i > maxGAPerLine){
+						clipboard += JSON.stringify(data);
+						clipboard += "\n";
+						data = {};
+						i = 0;
+					}
 				}
-				data = JSON.stringify(data);
-				console.log(data);
-				navigator.clipboard.writeText(data);
+				clipboard += JSON.stringify(data);
+				console.log(clipboard);
+				navigator.clipboard.writeText(clipboard);
 				alert("Exported to Clipboard & Console");
 			});
 
 			$("body").on("click", "#import-visited-data", function(){
 				let data = prompt("Import");
 				try {
-					data = JSON.parse(data);
+					let parsedData = {};
+					for(let line of data.split(/\r\n|\r|\n/g)){
+						Object.assign(parsedData, JSON.parse(line));
+					}
+					data = parsedData;
 					for (let k in data) {
 						if(localStorage.getItem(k) === null){
 							localStorage.setItem(k, data[k]);
@@ -284,5 +342,31 @@ $(document).ready(function(){
 	function GetGACode(url){
 		return gaKeyPrefix + reg.exec(url)[1];
 	}
+
+	// Global CSS
+	(function(){
+		$("body").append(`
+			<style type="text/css">
+				/*Delete Button*/
+				.sidebar__entry-delete{
+					background-image: linear-gradient(#900 0%, #963 100%) !important;
+				}
+
+				/*Entered GAs*/
+				.is-faded {
+					opacity: .25 !important;
+				}
+
+				a.giveaway__heading__name{
+					color: #4B72D4;
+				}
+
+				a:visited.giveaway__heading__name, a:visited.homepage_table_column_heading, a:visited.table__column__heading{
+					/*color: #c99;*/
+					color: purple;
+				}
+			</style>
+		`);
+	})();
 
 });
