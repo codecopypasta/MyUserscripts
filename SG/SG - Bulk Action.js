@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         SG - Bulk Action & Better GA listings
-// @version      2.8
+// @version      2.8.1
 // @description  Make SG easier to use
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
-// @match        https://www.steamgifts.com/giveaways/*
+// @match        https://www.steamgifts.com/user/*
 // @match        https://www.steamgifts.com/giveaway/*
+// @match        https://www.steamgifts.com/giveaways/*
 // @exclude      https://www.steamgifts.com/giveaways/won
 // @exclude      https://www.steamgifts.com/giveaways/won/*
 // @exclude      https://www.steamgifts.com/giveaways/entered
@@ -46,7 +47,7 @@ $(document).ready(function(){
 			window.close();
 		}
 	}
-	else{
+	else if(currentUrl.includes("https://www.steamgifts.com/giveaways/")){
 		let id = 0;
 		let start = 0;
 		let end = 0;
@@ -207,42 +208,6 @@ $(document).ready(function(){
 		}
 
 
-		// Better timestamps & Color codes in GA lists
-		(function(){
-			let hslMin = 0;   // red
-			let hslMax = 115; // green
-			let timeMin = 300;	  // 5 mins
-			let timeMax = 259200; // 3 days
-				
-				
-			function prettyTimeDiff(t1, t2){
-				let diff = (t2 - t1) / 1000;
-				let w = parseInt(diff/60/60/24/7);
-				let d = parseInt(diff/60/60/24) - w*7;
-				let h = parseInt(diff/60/60) - (w*7 + d)*24;
-				let m = parseInt(diff/60) - (w*7*24 + d*24 + h)*60;
-				return {str:`${w}w ${d}d ${h}h ${m}m`, "w":w, "d":d, "h":h, "m":m, "diff":diff};
-			}
-			
-			setTimeout(function() {
-				$(".giveaway__columns > div:first-child > span[data-timestamp]").each(function(){
-					let time = new Date(parseInt($(this).attr("data-timestamp"))*1000);
-					let inFuture = time.getTime() > Date.now();
-					let diff = inFuture ? prettyTimeDiff(Date.now(), time.getTime()) : prettyTimeDiff(time.getTime(), Date.now());
-					$(this).html(`${$(this).text()} (${diff["str"]})`);
-					
-					if(inFuture){
-						// Dynamic Coloring
-						let h = Math.min(diff["diff"], timeMax + timeMin) - timeMin;
-						h = h / timeMax;
-						h = (hslMax - hslMin) * h + hslMin;
-						$(this).parent().css("background", `hsl(${h}, 75%, 20%)`);
-					}
-				});
-			}, 500);
-		})();
-
-
 		// Export/Import Panel
 		(function(){
 			let maxGAPerLine = 1850;
@@ -343,6 +308,7 @@ $(document).ready(function(){
 		return gaKeyPrefix + reg.exec(url)[1];
 	}
 
+
 	// Global CSS
 	(function(){
 		$("body").append(`
@@ -367,6 +333,41 @@ $(document).ready(function(){
 				}
 			</style>
 		`);
+	})();
+
+	// Better timestamps & Color codes in GA lists - Needs to be global
+	(function(){
+		let hslMin = 0;       // red
+		let hslMax = 115;     // green
+		let timeMin = 300;    // 5 mins
+		let timeMax = 259200; // 3 days
+
+
+		function prettyTimeDiff(t1, t2){
+			let diff = (t2 - t1) / 1000;
+			let w = parseInt(diff/60/60/24/7);
+			let d = parseInt(diff/60/60/24) - w*7;
+			let h = parseInt(diff/60/60) - (w*7 + d)*24;
+			let m = parseInt(diff/60) - (w*7*24 + d*24 + h)*60;
+			return {str:`${w}w ${d}d ${h}h ${m}m`, "w":w, "d":d, "h":h, "m":m, "diff":diff};
+		}
+
+		setTimeout(function() {
+			$(".giveaway__columns > div:first-child > span[data-timestamp]").each(function(){
+				let time = new Date(parseInt($(this).attr("data-timestamp"))*1000);
+				let inFuture = time.getTime() > Date.now();
+				let diff = inFuture ? prettyTimeDiff(Date.now(), time.getTime()) : prettyTimeDiff(time.getTime(), Date.now());
+				$(this).html(`${$(this).text()} (${diff["str"]})`);
+
+				if(inFuture){
+					// Dynamic Coloring
+					let h = Math.min(diff["diff"], timeMax + timeMin) - timeMin;
+					h = h / timeMax;
+					h = (hslMax - hslMin) * h + hslMin;
+					$(this).parent().css("background", `hsl(${h}, 75%, 20%)`);
+				}
+			});
+		}, 500);
 	})();
 
 });
