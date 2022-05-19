@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action & Better GA listings
-// @version      2.8.1
+// @version      2.8.2
 // @description  Make SG easier to use
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -47,7 +47,7 @@ $(document).ready(function(){
 			window.close();
 		}
 	}
-	else if(currentUrl.includes("https://www.steamgifts.com/giveaways/")){
+	else if(currentUrl.includes("steamgifts.com/giveaways/") || currentUrl.endsWith("steamgifts.com")){
 		let id = 0;
 		let start = 0;
 		let end = 0;
