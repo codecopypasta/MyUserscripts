@@ -47,7 +47,7 @@ $(document).ready(function(){
 			window.close();
 		}
 	}
-	else if(currentUrl.includes("steamgifts.com/giveaways/") || currentUrl.endsWith("steamgifts.com")){
+	else if(currentUrl.includes("steamgifts.com/giveaways/") || currentUrl.endsWith("steamgifts.com") || currentUrl.endsWith("steamgifts.com/")){
 		let id = 0;
 		let start = 0;
 		let end = 0;
