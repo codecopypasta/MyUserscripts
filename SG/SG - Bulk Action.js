@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action & Better GA listings
-// @version      2.8.5
+// @version      2.8.6
 // @description  Make SG easier to use
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -16,10 +16,10 @@
 // @exclude      https://www.steamgifts.com/giveaways/created/*
 // @exclude      https://www.steamgifts.com/giveaways/wishlist
 // @exclude      https://www.steamgifts.com/giveaways/wishlist/*
-// @exclude      https://www.steamgifts.com/giveaways/group/*/*/users
-// @exclude      https://www.steamgifts.com/giveaways/group/*/*/stats
-// @exclude      https://www.steamgifts.com/giveaways/group/*/*/wishlist
 // @exclude      https://www.steamgifts.com/giveaways/new
+// @exclude      https://www.steamgifts.com/group/*/*/users
+// @exclude      https://www.steamgifts.com/group/*/*/stats
+// @exclude      https://www.steamgifts.com/group/*/*/wishlist
 // @icon         https://www.google.com/s2/favicons?domain=steamgifts.com
 // @grant        GM_setClipboard
 // ==/UserScript==
