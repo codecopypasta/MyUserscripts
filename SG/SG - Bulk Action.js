@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action & Better GA listings
-// @version      2.8.3
+// @version      2.8.5
 // @description  Make SG easier to use
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
