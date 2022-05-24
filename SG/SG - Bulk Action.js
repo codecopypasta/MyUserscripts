@@ -7,6 +7,7 @@
 // @match        https://www.steamgifts.com/user/*
 // @match        https://www.steamgifts.com/giveaway/*
 // @match        https://www.steamgifts.com/giveaways/*
+// @match        https://www.steamgifts.com/group/*
 // @exclude      https://www.steamgifts.com/giveaways/won
 // @exclude      https://www.steamgifts.com/giveaways/won/*
 // @exclude      https://www.steamgifts.com/giveaways/entered
@@ -15,6 +16,9 @@
 // @exclude      https://www.steamgifts.com/giveaways/created/*
 // @exclude      https://www.steamgifts.com/giveaways/wishlist
 // @exclude      https://www.steamgifts.com/giveaways/wishlist/*
+// @exclude      https://www.steamgifts.com/giveaways/group/*/*/users
+// @exclude      https://www.steamgifts.com/giveaways/group/*/*/stats
+// @exclude      https://www.steamgifts.com/giveaways/group/*/*/wishlist
 // @exclude      https://www.steamgifts.com/giveaways/new
 // @icon         https://www.google.com/s2/favicons?domain=steamgifts.com
 // @grant        GM_setClipboard
@@ -47,7 +51,7 @@ $(document).ready(function(){
 			window.close();
 		}
 	}
-	else if(currentUrl.includes("steamgifts.com/giveaways/") || currentUrl.endsWith("steamgifts.com") || currentUrl.endsWith("steamgifts.com/")){
+	else if(currentUrl.includes("steamgifts.com/giveaways/") || currentUrl.includes("steamgifts.com/group/") || currentUrl.endsWith("steamgifts.com") || currentUrl.endsWith("steamgifts.com/")){
 		let id = 0;
 		let start = 0;
 		let end = 0;
