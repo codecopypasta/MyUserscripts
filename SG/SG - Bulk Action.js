@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action & Better GA listings
-// @version      2.8.6
+// @version      2.8.7
 // @description  Make SG easier to use
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -158,10 +158,12 @@ $(document).ready(function(){
 			let weekInMS = 1000 * 60 * 60 * 24 * 7; // ms in a week
 			let now = Date.now();
 			let keysToRemove = [];
+			let noOfKeys = 0;
 
 			for(let i = 0; i < localStorage.length; i++){
 				let key = localStorage.key(i);
 				if(key.startsWith(gaKeyPrefix)){
+					noOfKeys++;
 					if(now > Number(localStorage.getItem(key))){
 						keysToRemove.push(key);
 					}
@@ -172,6 +174,7 @@ $(document).ready(function(){
 				console.log("Removing key: " + key);
 				localStorage.removeItem(key);
 			}
+			console.log("Total keys: " + noOfKeys);
 			console.log("Total keys removed: " + keysToRemove.length);
 		})();
 
