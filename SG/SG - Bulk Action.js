@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action & Better GA listings
-// @version      2.8.7
+// @version      2.8.8
 // @description  Make SG easier to use
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -314,33 +314,6 @@ $(document).ready(function(){
 	function GetGACode(url){
 		return gaKeyPrefix + reg.exec(url)[1];
 	}
-
-
-	// Global CSS
-	(function(){
-		$("body").append(`
-			<style type="text/css">
-				/*Delete Button*/
-				.sidebar__entry-delete{
-					background-image: linear-gradient(#900 0%, #963 100%) !important;
-				}
-
-				/*Entered GAs*/
-				.is-faded {
-					opacity: .25 !important;
-				}
-
-				a.giveaway__heading__name{
-					color: #4B72D4;
-				}
-
-				a:visited.giveaway__heading__name, a:visited.homepage_table_column_heading, a:visited.table__column__heading{
-					/*color: #c99;*/
-					color: purple;
-				}
-			</style>
-		`);
-	})();
 
 	// Better timestamps & Color codes in GA lists - Needs to be global
 	(function(){
