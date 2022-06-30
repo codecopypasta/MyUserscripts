@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action & Better GA listings
-// @version      2.9
+// @version      2.9.1
 // @description  Make SG easier to use
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -180,9 +180,9 @@ $(document).ready(function(){
 				localStorage.removeItem(key);
 			}
 			console.log(
-				"Total keys initially: " + noOfKeys
-				+ "\nNo keys removed: " + keysToRemove.length
-				+ "\nNew Total keys: " + noOfKeys - keysToRemove.length
+				`Total keys initially: ${noOfKeys}`
+				+ `\nNo keys removed: ${keysToRemove.length}`
+				+ `\nNew Total keys: ${noOfKeys - keysToRemove.length}`
 				);
 		})();
 
