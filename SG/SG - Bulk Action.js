@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action & Better GA listings
-// @version      2.8.8
+// @version      2.9
 // @description  Make SG easier to use
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -43,8 +43,11 @@ $(document).ready(function(){
 		}
 
 		if(!parameters.has("bulked") && localStorage.getItem(urlToAdd) === null){
-			let timestamp = $(".featured__column > span[data-timestamp]").first().data("timestamp") * 1000;
-			localStorage.setItem(urlToAdd, timestamp);
+			let $timeFields = $(".featured__column > span[data-timestamp]");
+			if($timeFields.length > 0){
+				let timestamp = $timeFields.first().data("timestamp") * 1000;
+				localStorage.setItem(urlToAdd, timestamp);
+			}
 		}
 
 		if(parameters.has("close")){
@@ -164,7 +167,9 @@ $(document).ready(function(){
 				let key = localStorage.key(i);
 				if(key.startsWith(gaKeyPrefix)){
 					noOfKeys++;
-					if(now > Number(localStorage.getItem(key))){
+					let expiryTime = Number(localStorage.getItem(key));
+					// CHeck for NaN due to legacy keys that might still be present
+					if(now > expiryTime || isNaN(expiryTime)){
 						keysToRemove.push(key);
 					}
 				}
@@ -174,8 +179,11 @@ $(document).ready(function(){
 				console.log("Removing key: " + key);
 				localStorage.removeItem(key);
 			}
-			console.log("Total keys: " + noOfKeys);
-			console.log("Total keys removed: " + keysToRemove.length);
+			console.log(
+				"Total keys initially: " + noOfKeys
+				+ "\nNo keys removed: " + keysToRemove.length
+				+ "\nNew Total keys: " + noOfKeys - keysToRemove.length
+				);
 		})();
 
 
@@ -245,6 +253,7 @@ $(document).ready(function(){
 				}
 				clipboard += JSON.stringify(data);
 				console.log(clipboard);
+				console.log("Total exported keys: " + keys.length);
 				navigator.clipboard.writeText(clipboard);
 				alert("Exported to Clipboard & Console");
 			});
