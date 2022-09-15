@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         SG - Title Setter
-// @version      1.1
+// @version      1.2
 // @description  Why doesn't SG set the page title as the game name?
 // @author       codecopypasta
 // @match        https://www.steamgifts.com/giveaways/search?app=*
+// @match        https://www.steamgifts.com/giveaways/search?sub=*
 // @icon         https://www.google.com/s2/favicons?domain=steamgifts.com
 // @grant        none
 // ==/UserScript==
