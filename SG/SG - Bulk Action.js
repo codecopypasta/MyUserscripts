@@ -8,6 +8,7 @@
 // @match        https://www.steamgifts.com/giveaway/*
 // @match        https://www.steamgifts.com/giveaways/*
 // @match        https://www.steamgifts.com/group/*
+// @match        https://www.steamgifts.com/game/*
 // @exclude      https://www.steamgifts.com/giveaways/won
 // @exclude      https://www.steamgifts.com/giveaways/won/*
 // @exclude      https://www.steamgifts.com/giveaways/entered
