@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action & Better GA listings
-// @version      2.9.2
+// @version      2.9.3
 // @description  Make SG easier to use
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -21,6 +21,7 @@
 // @exclude      https://www.steamgifts.com/group/*/*/users
 // @exclude      https://www.steamgifts.com/group/*/*/stats
 // @exclude      https://www.steamgifts.com/group/*/*/wishlist
+// @exclude      https://www.steamgifts.com/game/*/*/stats
 // @icon         https://www.google.com/s2/favicons?domain=steamgifts.com
 // @grant        GM_setClipboard
 // ==/UserScript==
