@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Bulk Action & Better GA listings
-// @version      2.9.5
+// @version      2.9.6
 // @description  Make SG easier to use
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
@@ -116,8 +116,10 @@ $(document).ready(function(){
 			$("body").on("click", "#bulk-link-select-smart", function(){
 				let links = GetVisitedLinks();
 				$(".bulk-link-opener-cb").each(function(){
+					let time = new Date(parseInt($(this).attr("data-time")));
+					let inFuture = time.getTime() > Date.now();
 					let curLink = GetGACode($(this).data("link"));
-					if(!links.includes(curLink)){
+					if(!links.includes(curLink) && inFuture){
 						$(this).prop("checked", true).change();
 					}
 				});
