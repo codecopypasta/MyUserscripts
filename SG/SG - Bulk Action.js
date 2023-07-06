@@ -1,23 +1,23 @@
 // ==UserScript==
 // @name         SG - Bulk Action & Better GA listings
-// @version      2.9.3
+// @version      2.9.5
 // @description  Make SG easier to use
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
-// @match        https://www.steamgifts.com/user/*
+// @match        https://www.steamgifts.com/game/*
 // @match        https://www.steamgifts.com/giveaway/*
 // @match        https://www.steamgifts.com/giveaways/*
 // @match        https://www.steamgifts.com/group/*
-// @match        https://www.steamgifts.com/game/*
-// @exclude      https://www.steamgifts.com/giveaways/won
-// @exclude      https://www.steamgifts.com/giveaways/won/*
-// @exclude      https://www.steamgifts.com/giveaways/entered
-// @exclude      https://www.steamgifts.com/giveaways/entered/*
+// @match        https://www.steamgifts.com/user/*
 // @exclude      https://www.steamgifts.com/giveaways/created
 // @exclude      https://www.steamgifts.com/giveaways/created/*
+// @exclude      https://www.steamgifts.com/giveaways/entered
+// @exclude      https://www.steamgifts.com/giveaways/entered/*
+// @exclude      https://www.steamgifts.com/giveaways/new
 // @exclude      https://www.steamgifts.com/giveaways/wishlist
 // @exclude      https://www.steamgifts.com/giveaways/wishlist/*
-// @exclude      https://www.steamgifts.com/giveaways/new
+// @exclude      https://www.steamgifts.com/giveaways/won
+// @exclude      https://www.steamgifts.com/giveaways/won/*
 // @exclude      https://www.steamgifts.com/group/*/*/users
 // @exclude      https://www.steamgifts.com/group/*/*/stats
 // @exclude      https://www.steamgifts.com/group/*/*/wishlist
@@ -56,7 +56,7 @@ $(document).ready(function(){
 			window.close();
 		}
 	}
-	else if(currentUrl.includes("steamgifts.com/giveaways/") || currentUrl.includes("steamgifts.com/group/") || currentUrl.endsWith("steamgifts.com") || currentUrl.endsWith("steamgifts.com/")){
+	else{ // if(currentUrl.includes("steamgifts.com/giveaways/") || currentUrl.includes("steamgifts.com/group/") || currentUrl.endsWith("steamgifts.com") || currentUrl.endsWith("steamgifts.com/") || currentUrl.includes("steamgifts.com/game/")){
 		let id = 0;
 		let start = 0;
 		let end = 0;
