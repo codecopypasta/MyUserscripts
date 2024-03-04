@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SG - Better Style
-// @version      1.1
+// @version      1.1.1
 // @description  Imrpove the Style for SG as per my personal liking
 // @author       codecopypasta
 // @match        https://www.steamgifts.com
