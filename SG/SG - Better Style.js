@@ -30,7 +30,8 @@
 			}
 
 			a:visited.giveaway__heading__name, a:visited.homepage_table_column_heading,
-			a:visited.table__column__heading, .comment__description.markdown a:visited {
+			a:visited.table__column__heading, .comment__description.markdown a:visited,
+   			.page__description a:visited {
 				/*color: #c99;*/
 				color: purple;
 			}
