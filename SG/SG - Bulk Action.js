@@ -348,16 +348,20 @@ $(document).ready(function(){
 		setTimeout(function() {
 			$(".giveaway__columns > div:first-child > span[data-timestamp]").each(function(){
 				let time = new Date(parseInt($(this).attr("data-timestamp"))*1000);
-				let inFuture = time.getTime() > Date.now();
-				let diff = inFuture ? prettyTimeDiff(Date.now(), time.getTime()) : prettyTimeDiff(time.getTime(), Date.now());
+				let started = $(this).parent().text().includes("remaining");
+				let notEnded = time.getTime() > Date.now();
+				let diff = notEnded ? prettyTimeDiff(Date.now(), time.getTime()) : prettyTimeDiff(time.getTime(), Date.now());
 				$(this).html(`${$(this).text()} (${diff["str"]})`);
 
-				if(inFuture){
+				if(notEnded && started){
 					// Dynamic Coloring
 					let h = Math.min(diff["diff"], timeMax + timeMin) - timeMin;
 					h = h / timeMax;
 					h = (hslMax - hslMin) * h + hslMin;
 					$(this).parent().css("background", `hsl(${h}, 75%, 20%)`);
+				}
+				else if(notEnded){
+					$(this).parent().css("background", `#083875`);
 				}
 			});
 		}, 500);
